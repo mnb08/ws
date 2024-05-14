@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <body>
+        <input type="text" id="name">
+        <button>send</button>
+        <ul class="chat"></ul>
+
+        <script>
+            const nameEl = document.querySelector('#name')
+            const btn = document.querySelector('button')
+            const messagesList = document.querySelector('.chat')
+
+            const ws = new WebSocket('ws://mnbetc.com/')
+
+            const renderChat = (arr) => {
+                console.log(arr)
+                messagesList.innerHTML = ''
+                arr.forEach(element => {
+                    const item = JSON.parse(element)
+                    const messageLi = document.createElement('li')
+                    messageLi.innerText = item.name 
+                    messagesList.prepend(messageLi)
+                });
+            }
+            
+            ws.onmessage = (message) => {
+                renderChat(JSON.parse(message.data))
+            }
+            
+            
+
+            const send = () => {
+                const name = nameEl.value
+                ws.send(JSON.stringify({name}))
+            }
+            
+            btn.addEventListener('click', send)
+        </script>
+    </body>
+</html>
